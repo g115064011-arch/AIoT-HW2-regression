@@ -5,3 +5,4 @@ __pycache__/
 kaggle.json
 access_token
 .env
+submissions/
