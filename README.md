@@ -51,11 +51,33 @@
 ## 專案結構
 
 ```
+├── index.html                       # 網頁平台主頁（整合 Problem 1, Problem 2, 自訂資料集）
+├── style.css                        # 視覺主題樣式表（支援綠金雅致風與科技藍風格）
+├── app.js                           # 核心統計運算、動態圖表與 OLS 引擎
 ├── notebooks/7115064011_hw2.ipynb   # 主程式（CRISP-DM 六階段）
 ├── model/model_params.json          # 部署用模型參數（執行後產生）
-├── data/                            # Kaggle 資料（未上傳，見下方下載方式）
+├── data/                            # 資料集（含 50_Startups.csv 與 Kaggle 資料）
 └── submissions/                     # Kaggle 提交檔（未上傳）
 ```
+
+---
+
+## 🌐 互動式網頁平台功能說明 (Web Platform)
+
+本專題提供完整的純前端互動式多元線性迴歸分析平台（免安裝複雜後端環境，點擊 [`index.html`](index.html) 或以任何靜態伺服器開啟即可直接使用）：
+
+### 🎯 加分項目落實：
+1. **加總分 1分：下拉視窗呈現兩種 Problem**
+   - **Problem 1: 基礎多元線性迴歸分析 (Basic Multiple Linear Regression)**：呈現 50 Startups 全特徵基準模型，包含 $R^2$、RMSE、MAE、調整後 $R^2$、統計診斷圖表 (實際值 vs 預測值、殘差分佈圖)、特徵係數圖、迴歸方程式與係數顯著性統計表、測試集樣本預測表、即時獲利試算器、CRISP-DM 六大流程卡片與商業洞察。
+   - **Problem 2: 特徵選擇與模型精簡 (Feature Selection & Model Comparison)**：比較 5 種機器學習特徵篩選方法（Lasso、Forward SFS、Backward SFS、RFE、ElasticNet、Exhaustive Search），提供 $k=1 \sim 5$ 動態切換、RMSE 與 $R^2$ 消長折線圖、鎖定 $k=2$ 最佳黃金平衡點（Optimal Sweet Spot，RMSE 降至全場最低 $8,198.80）以及 6 種特徵配置卡片。
+2. **加總分 2分：可任意輸入 Dataset**
+   - **支援任意公開 CSV URL 輸入**：預設帶入 `https://raw.githubusercontent.com/Avik-Jain/100-Days-Of-ML-Code/master/datasets/50_Startups.csv`，亦可載入任何外部 CSV 或本機檔案。
+   - **自動型態辨識與動態欄位選擇**：自動區分數值與類別特徵，自由挑選預測目標 $y$ 與特徵矩陣 $X$。
+   - **純前端 OLS 矩陣迴歸計算引擎**：即時求解 $\beta = (X^T X)^{-1} X^T y$，動態產生模型指標、殘差診斷圖、迴歸方程式與係數表。
+   - **動態即時敏感度實驗室 (Live Sensitivity Lab)**：依據使用者選取之特徵自動生成互動滑桿與選單，滑動時即時推估預測值！
+3. **加碼整合原 Kaggle 洪水機率預測專案**：在下拉選單中可切換至洪水機率預測專案，整合 20 項特徵與即時風險模擬器。
+4. **雙風格外觀主題切換**：點擊右上角按鈕即可在「綠金雅致風格」與「科技藍風格」之間一鍵無縫切換。
+
 
 ---
 

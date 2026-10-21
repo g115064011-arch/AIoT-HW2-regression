@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kaggle 洪水機率預測 | 多元線性迴歸分析平台 (AIoT HW2)</title>
+  
+  <!-- 外部依賴：Google Fonts, Font Awesome, Chart.js, PapaParse -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  
+  <!-- 綠色優雅風格樣式表 (參照截圖綠金雅致風) -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- 頂部導航欄 (Top Navbar - 綠色優雅科技風) -->
+  <header class="navbar">
+    <div class="nav-brand">
+      <div class="brand-icon">
+        <i class="fa-solid fa-water"></i>
+      </div>
+      <div class="brand-title-wrap">
+        <span class="brand-title">Kaggle 洪水機率預測 | 多元線性迴歸分析平台</span>
+        <span class="brand-subtitle">AIoT HW2 ‧ CRISP-DM 流程 ‧ 20項環境與治理特徵 ‧ 學號: 7115064011</span>
+      </div>
+    </div>
+
+    <div class="nav-controls">
+      <!-- 下拉視窗呈現兩種 Problem 及 自訂資料集 (完成加分 1分) -->
+      <div class="problem-selector-container">
+        <label for="problemSelect" class="selector-label">
+          <i class="fa-solid fa-layer-group"></i> 分析模式:
+        </label>
+        <select id="problemSelect" class="problem-select">
+          <option value="problem1">Problem 1: 基礎多元線性迴歸分析 (全 20 特徵模型)</option>
+          <option value="problem2">Problem 2: 特徵選擇與模型比較 (5種演算法評估)</option>
+          <option value="customDataset">⭐ 加分功能: 自訂 CSV 資料集多元迴歸 (任意輸入 Dataset)</option>
+        </select>
+      </div>
+
+      <!-- Vercel 雲端部署標籤 -->
+      <div style="font-size: 0.78rem; font-weight: 700; background: rgba(255,255,255,0.12); padding: 5px 10px; border-radius: 6px; color: #a7f3d0; border: 1px solid rgba(255,255,255,0.2);">
+        <i class="fa-brands fa-cloudflare"></i> Vercel Ready
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 1: PROBLEM 1 基礎多元線性迴歸分析 (Kaggle 洪水全特徵基準模型) -->
+    <!-- ========================================================================= -->
+    <section id="problem1View" class="problem-view">
+      <!-- 頂部橫幅卡片 -->
+      <div class="hero-banner">
+        <div class="badge-tag-wrap">
+          <span class="badge badge-green"><i class="fa-solid fa-check-double"></i> CRISP-DM 六大流程</span>
+          <span class="badge badge-blue"><i class="fa-solid fa-database"></i> Kaggle S4E5 資料集</span>
+          <span class="badge badge-purple"><i class="fa-solid fa-layer-group"></i> 全 20 項評分特徵</span>
+          <span class="badge badge-coral"><i class="fa-solid fa-shield-halved"></i> 95% 預測區間</span>
+        </div>
+        <h1 class="hero-title">Problem 1: 基礎多元線性迴歸分析 (Basic Multiple Linear Regression)</h1>
+        <p class="hero-desc">
+          以 Kaggle Playground Series S4E5 洪水預測資料集（1,117,957 筆訓練集、745,305 筆測試集）為基礎，納入季風強度、地形排水、河川管理、都市化程度等 20 項環境、地理與治理評分特徵，建立全特徵 OLS 線性迴歸模型，並進行顯著性檢定、常態性與 95% 預測區間覆蓋率評估。
+        </p>
+      </div>
+
+      <!-- 模型摘要卡片 -->
+      <div class="card" style="border-left: 4px solid var(--primary-accent); background: #faf9f5;">
+        <h3 class="card-title" style="margin-bottom: 6px;">
+          <span><i class="fa-solid fa-circle-info section-icon"></i> Kaggle 洪水全特徵 OLS 模型摘要</span>
+          <span class="badge badge-green">Validation R²: 0.8449 | F-Stat: 304,912.8 (p &lt; 0.0001)</span>
+        </h3>
+        <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6;">
+          模型在驗證集取得 <strong>0.8449 (84.49%)</strong> 的高度解釋力，Kaggle 競賽 Public Score 達 <strong>0.84458</strong>、Private Score 達 <strong>0.84426</strong>。20 個特徵彼此相關係數極低（|r| &lt; 0.02），VIF 介於 1.0017 ~ 1.0037（無多重共線性），各特徵標準化係數均約為 <strong>0.0115 ~ 0.0118</strong>，呈現高度穩定的多因子等權重累積效應。
+        </p>
+      </div>
+
+      <!-- 核心評估指標卡片格 (5 Cards) -->
+      <div class="section-header">
+        <h2 class="section-title"><i class="fa-solid fa-gauge-high section-icon"></i> 核心評估指標 · Model Performance Metrics</h2>
+        <span class="section-subtitle">Kaggle 競賽公私榜與驗證集評估</span>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-card" style="border-color: #10b981;">
+          <div class="metric-header">
+            <span class="metric-title">Validation R²</span>
+            <span class="metric-badge badge-green">Kaggle Score ★</span>
+          </div>
+          <div class="metric-value" style="color: #10b981;">0.8449</div>
+          <div class="metric-desc">公榜 0.84458 / 私榜 0.84426</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title">均方根誤差 RMSE</span>
+            <span class="metric-badge badge-blue">Precision</span>
+          </div>
+          <div class="metric-value">0.0201</div>
+          <div class="metric-desc">均值機率預測標準偏差極小</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title">平均絕對誤差 MAE</span>
+            <span class="metric-badge badge-coral">Mean Abs Err</span>
+          </div>
+          <div class="metric-value">0.0158</div>
+          <div class="metric-desc">平均單筆誤差僅 1.58% 機率</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title">95% 預測區間覆蓋率</span>
+            <span class="metric-badge badge-purple">Coverage</span>
+          </div>
+          <div class="metric-value">94.61%</div>
+          <div class="metric-desc">高度貼合理論目標 95.0%</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title">共線性檢驗 VIF</span>
+            <span class="metric-badge badge-green">Non-Collinear</span>
+          </div>
+          <div class="metric-value">1.0024</div>
+          <div class="metric-desc">所有特徵 VIF 均小於 1.004</div>
+        </div>
+      </div>
+
+      <!-- 統計診斷圖表 -->
+      <div class="section-header">
+        <h2 class="section-title"><i class="fa-solid fa-chart-line section-icon"></i> 統計診斷圖表 · Diagnostic Visualizations</h2>
+        <span class="section-subtitle">實際值 vs 預測值與殘差獨立性診斷</span>
+      </div>
+
+      <div class="charts-grid-2">
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3 class="chart-title">實際值 vs 預測值 (Actual vs Predicted)</h3>
+            <span class="badge badge-green">R² = 0.8449</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="floodActualVsPredChart"></canvas>
+          </div>
+          <p class="chart-annotation">
+            <strong>診斷分析：</strong>驗證集點位對稱且緊密圍繞紅色 45 度理想線 (y = x)，無明顯非線性彎曲或異方差趨勢，模型在 0.28 ~ 0.72 機率區間內表現極其穩健。
+          </p>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3 class="chart-title">殘差分佈圖 (Residual Plot)</h3>
+            <span class="badge badge-blue">Durbin-Watson = 1.999</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="floodResidualsChart"></canvas>
+          </div>
+          <p class="chart-annotation">
+            <strong>診斷分析：</strong>殘差均勻散布在 0 軸水平虛線兩側，Durbin-Watson 檢定值為 1.999（無任何自相關）；殘差呈現些微右偏厚尾，反映極端極值。
+          </p>
+        </div>
+      </div>
+
+      <!-- 20 項特徵迴歸係數橫條圖 -->
+      <div class="card">
+        <div class="chart-header">
+          <h3 class="chart-title"><i class="fa-solid fa-chart-column section-icon"></i> 20 項環境與治理特徵標準化係數分析 (Standardized Beta)</h3>
+          <span class="badge badge-purple">近乎等權重 (0.0115 ~ 0.0118)</span>
+        </div>
+        <div class="chart-wrapper" style="height: 380px;">
+          <canvas id="floodCoefficientsChart"></canvas>
+        </div>
+        <p class="chart-annotation">
+          <strong>係數洞察：</strong>各特徵之迴歸係數落在極為狹窄的區間（+0.01154 ~ +0.01185），海岸脆弱度、地形排水與政治法規落實為前三位，但無任一特徵單獨主導，證明洪水風險是多元因子累積發生的結果。
+        </p>
+      </div>
+
+      <!-- 迴歸方程式與係數表 -->
+      <div class="section-header">
+        <h2 class="section-title"><i class="fa-solid fa-square-root-variable section-icon"></i> 迴歸方程式與 20 項特徵統計檢定表 · Model Parameters</h2>
+        <span class="section-subtitle">參數估計、標準誤與共線性 (VIF) 檢視</span>
+      </div>
+
+      <div class="equation-card">
+        <div class="equation-label">Fitted OLS Regression Equation (Standardized Form)</div>
+        <div class="equation-content">
+          FloodProbability = <span class="equation-highlight">0.50448</span> + <span class="equation-highlight">0.01185</span> × CoastalVulnerability* + <span class="equation-highlight">0.01183</span> × TopographyDrainage* + <span class="equation-highlight">0.01181</span> × PoliticalFactors* + <span class="equation-highlight">0.01179</span> × Urbanization* + ... + <span class="equation-highlight">0.01154</span> × MonsoonIntensity*
+        </div>
+      </div>
+
+      <!-- 係數表 + 即時模擬器 雙欄排列 -->
+      <div class="grid-2-split">
+        <!-- 左欄：20 特徵係數表 -->
+        <div class="card" style="margin-bottom: 0;">
+          <h3 class="card-title">全 20 特徵統計顯著性檢定表</h3>
+          <div class="data-table-container" style="max-height: 480px; overflow-y: auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>特徵名稱 (Feature)</th>
+                  <th>中文意涵</th>
+                  <th>標準化係數 (β)</th>
+                  <th>均值 (Mean)</th>
+                  <th>標準差 (Scale)</th>
+                  <th>t-統計量</th>
+                  <th>p-值</th>
+                  <th>VIF (共線性)</th>
+                </tr>
+              </thead>
+              <tbody id="floodCoeffTableBody">
+                <!-- JS 動態生成 20 列 -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 右欄：即時洪水風險預測器 (Live Predictor) -->
+        <div class="predictor-card">
+          <div class="predictor-header">
+            <h3 class="predictor-title"><i class="fa-solid fa-cloud-showers-heavy section-icon"></i> 即時洪水風險敏感度實驗室</h3>
+            <span id="floodRiskLevelBadge" class="badge badge-green">常態安全</span>
+          </div>
+
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">
+            滑動特徵評分 (0 ~ 15)，即時推算洪水機率與 95% 信賴預測區間：
+          </p>
+
+          <div id="floodLivePredictorControls" style="overflow-y: auto; max-height: 280px; padding-right: 6px;">
+            <!-- JS 動態生成 20 項滑桿 -->
+          </div>
+
+          <div class="prediction-result-box" style="margin-top: 16px;">
+            <div class="pred-result-label">PREDICTED FLOOD PROBABILITY</div>
+            <div id="floodPredictorResult" class="pred-result-val">50.45%</div>
+            <div id="floodPredictorPi" class="pred-result-sub">95% 預測區間: [46.51% ~ 54.39%]</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 測試集樣本預測表 -->
+      <div class="section-header">
+        <h2 class="section-title"><i class="fa-solid fa-list-check section-icon"></i> 驗證集抽樣樣本預測與 95% 預測區間檢視</h2>
+        <span class="section-subtitle">隨機抽樣 10 筆驗證資料預測表現</span>
+      </div>
+
+      <div class="card">
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>樣本編號</th>
+                <th>實際機率 (Actual)</th>
+                <th>預測機率 (Predicted)</th>
+                <th>95% 預測區間 [Lower, Upper]</th>
+                <th>預測殘差 (Residual)</th>
+                <th>區間覆蓋狀態</th>
+              </tr>
+            </thead>
+            <tbody id="floodPredictionsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- CRISP-DM 六大分析流程卡片 (參照截圖 3) -->
+      <div class="section-header">
+        <h2 class="section-title"><i class="fa-solid fa-diagram-project section-icon"></i> CRISP-DM 六大分析流程實踐 · Six Analytical Phases</h2>
+        <span class="section-subtitle">作業二專案完整研發路徑</span>
+      </div>
+
+      <div class="crisp-grid">
+        <div class="crisp-card">
+          <span class="crisp-step-badge">Phase 1</span>
+          <h4 class="crisp-title">商業理解 (Business Understanding)</h4>
+          <p class="crisp-desc">確立洪水災害防救的核心痛點，建立多因子機率預警模型，提供水利署與災害應變中心在災前調度防汛資源。</p>
+        </div>
+
+        <div class="crisp-card">
+          <span class="crisp-step-badge">Phase 2</span>
+          <h4 class="crisp-title">資料理解 (Data Understanding)</h4>
+          <p class="crisp-desc">探索 1,117,957 筆訓練資料，無缺失值；確認 20 個特徵彼此相關係數極低（|r| &lt; 0.02），與目標相關係數皆為 0.178 ~ 0.190。</p>
+        </div>
+
+        <div class="crisp-card">
+          <span class="crisp-step-badge">Phase 3</span>
+          <h4 class="crisp-title">資料準備 (Data Preparation)</h4>
+          <p class="crisp-desc">80/20 切分、標準化（只用訓練集 fit 避免資料外洩）；VIF 介於 1.0017 ~ 1.0037，特徵間完全無共線性干擾。</p>
+        </div>
+
+        <div class="crisp-card">
+          <span class="crisp-step-badge">Phase 4</span>
+          <h4 class="crisp-title">模型建立 (Modeling)</h4>
+          <p class="crisp-desc">訓練 statsmodels OLS、sklearn LinearRegression、RidgeCV 與 LassoCV，5-fold 交叉驗證極為穩定，20 個係數一致。</p>
+        </div>
+
+        <div class="crisp-card">
+          <span class="crisp-step-badge">Phase 5</span>
+          <h4 class="crisp-title">模型評估 (Evaluation)</h4>
+          <p class="crisp-desc">Actual vs Predicted 對角線吻合極佳，95% 預測區間覆蓋率達 94.61%；Durbin-Watson = 1.999（無自相關）。</p>
+        </div>
+
+        <div class="crisp-card">
+          <span class="crisp-step-badge">Phase 6</span>
+          <h4 class="crisp-title">模型部署 (Deployment)</h4>
+          <p class="crisp-desc">輸出 model/model_params.json，並將全專題封裝為純前端網頁，支援 Vercel 雲端直接部署與即時互動敏感度試算。</p>
+        </div>
+      </div>
+
+      <!-- 防汛策略與深度洞察 (參照截圖 3) -->
+      <div class="section-header">
+        <h2 class="section-title"><i class="fa-solid fa-lightbulb section-icon"></i> 防汛治理決策與深入洞察 · Strategic Policy Insights</h2>
+        <span class="section-subtitle">迴歸統計模型推導政策方針</span>
+      </div>
+
+      <div class="insights-card">
+        <div class="insight-item">
+          <div class="insight-title"><i class="fa-solid fa-water" style="color: #10b981;"></i> 1. 等權重複合效應：洪水非單一因子所致</div>
+          <div class="insight-text">實證係數顯示 20 個特徵標準化權重均在 0.0115 ~ 0.0118 間，無單一主導特徵。治理思維不能單抓「季風降雨」，必須同步改善都市排水與河道侵占。</div>
+        </div>
+
+        <div class="insight-item">
+          <div class="insight-title"><i class="fa-solid fa-city" style="color: #3b82f6;"></i> 2. 人為工程與治理能力直接關聯致災風險</div>
+          <div class="insight-text">政治治理（PoliticalFactors）、土地都市化（Urbanization）與防減災整備（IneffectiveDisasterPreparedness）之係數均名列前茅，強化公共治理落實能實質減災。</div>
+        </div>
+
+        <div class="insight-item">
+          <div class="insight-title"><i class="fa-solid fa-mountain" style="color: #f59e0b;"></i> 3. 地形與沿海脆弱度之結構性防線</div>
+          <div class="insight-text">沿海脆弱度 (CoastalVulnerability: 0.01185) 與地形排水坡度 (TopographyDrainage: 0.01183) 係數最高，針對低窪地與海岸線建立海堤蓄洪池具有最高投報效益。</div>
+        </div>
+
+        <div class="insight-item">
+          <div class="insight-title"><i class="fa-solid fa-tree" style="color: #6366f1;"></i> 4. 自然生態蓄洪調節功能不可忽視</div>
+          <div class="insight-text">森林砍伐 (Deforestation) 與濕地縮減 (WetlandLoss) 係數皆顯著為正，破壞自然水土保持將直接擴大洪峰流量。</div>
+        </div>
+
+        <div class="insight-item">
+          <div class="insight-title"><i class="fa-solid fa-chart-line" style="color: #10b981;"></i> 5. 特徵全數保留為最佳泛化策略</div>
+          <div class="insight-text">由於特徵間彼此正交獨立（|r| &lt; 0.02），每增加 1 項特徵即可帶來額外解釋力；全 20 特徵模型達到最高的 R² = 0.8449，無任何過擬合問題！</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 2: PROBLEM 2 特徵選擇與模型比較 (Kaggle 洪水專案特徵數量消長) -->
+    <!-- ========================================================================= -->
+    <section id="problem2View" class="problem-view" style="display: none;">
+      <!-- 頂部橫幅卡片 -->
+      <div class="hero-banner">
+        <div class="badge-tag-wrap">
+          <span class="badge badge-purple"><i class="fa-solid fa-wand-magic-sparkles"></i> 特徵工程</span>
+          <span class="badge badge-green"><i class="fa-solid fa-check-to-slot"></i> 全 20 特徵為最佳規格</span>
+          <span class="badge badge-blue"><i class="fa-solid fa-scale-balanced"></i> 5 種演算法全面評估</span>
+        </div>
+        <h1 class="hero-title">Problem 2: 特徵選擇與模型比較 (Feature Selection & Model Comparison)</h1>
+        <p class="hero-desc">
+          比較 SelectKBest、RFE (遞歸特徵消除)、RidgeCV、LassoCV 與 OLS 全特徵迴歸，深入剖析特徵數量 k (1, 5, 10, 15, 20) 對模型解釋力與預測誤差的消長趨勢，論證為何保留全部 20 個特徵為本資料集之最優策略。
+        </p>
+      </div>
+
+      <!-- 特徵數量 k 切換按鈕 (參照截圖 1 & 4) -->
+      <div class="card" style="padding: 16px 20px; margin-bottom: 16px;">
+        <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase;">
+          <i class="fa-solid fa-filter section-icon"></i> 特徵數量消長切換 (Select Feature Subset Size k):
+        </div>
+        <div class="k-buttons-row">
+          <button class="k-btn p2-k-btn" data-k="1">k = 1: 僅單一季風 (Baseline)</button>
+          <button class="k-btn p2-k-btn" data-k="5">k = 5: SelectKBest 前 5 特徵</button>
+          <button class="k-btn p2-k-btn" data-k="10">k = 10: 中度特徵子集</button>
+          <button class="k-btn p2-k-btn" data-k="15">k = 15: RFE 精簡特徵集</button>
+          <button class="k-btn p2-k-btn active sweet-spot" data-k="20">k = 20: 全特徵最優規格 ★ (Optimal Full Model)</button>
+        </div>
+      </div>
+
+      <!-- 動態指標卡片 (依所選 k 即時動態變化) -->
+      <div class="metrics-grid">
+        <div class="metric-card" style="border-color: #10b981;">
+          <div class="metric-header">
+            <span class="metric-title">Validation R²</span>
+            <span class="metric-badge badge-green">解釋力指標</span>
+          </div>
+          <div id="p2FloodMetricR2" class="metric-value" style="color: #10b981;">0.8449</div>
+          <div class="metric-desc">隨特徵數增加而穩定單調遞增</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title">Validation RMSE</span>
+            <span class="metric-badge badge-blue">預測標準差</span>
+          </div>
+          <div id="p2FloodMetricRmse" class="metric-value">0.0201</div>
+          <div class="metric-desc">k=20 達到全場最低誤差</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title">Validation MAE</span>
+            <span class="metric-badge badge-coral">平均絕對誤差</span>
+          </div>
+          <div id="p2FloodMetricMae" class="metric-value">0.0158</div>
+          <div class="metric-desc">平均機率估計誤差</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title">特徵間相關性</span>
+            <span class="metric-badge badge-green">|r| &lt; 0.02</span>
+          </div>
+          <div class="metric-value">近乎正交</div>
+          <div class="metric-desc">特徵間無冗餘重複資訊</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title">共線性風險</span>
+            <span class="metric-badge badge-green">VIF &lt; 1.004</span>
+          </div>
+          <div class="metric-value">零共線性</div>
+          <div class="metric-desc">自由度充裕無過擬合問題</div>
+        </div>
+      </div>
+
+      <!-- 當前選取配置說明卡片 -->
+      <div class="card" style="padding: 16px 20px; margin-bottom: 20px; background: #faf9f5; border-left: 4px solid var(--primary-accent);">
+        <h4 id="p2FloodConfigTitle" style="font-size: 0.95rem; font-weight: 800; color: var(--text-heading); margin-bottom: 4px;">
+          k = 20: 全特徵最優規格模型 (Optimal Full Model ★)
+        </h4>
+        <p id="p2FloodConfigDesc" style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+          ★ 最佳模型！20 項特徵彼此幾乎完全獨立 (|r| &lt; 0.02, VIF ≈ 1.002)，各特徵貢獻約 0.0117 累積權重，無任何多重共線性，達成 84.49% 卓越泛化解釋力！
+        </p>
+      </div>
+
+      <!-- 特徵數量消長折線圖 (參照截圖 1 & 4) -->
+      <div class="charts-grid-2">
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3 class="chart-title"><i class="fa-solid fa-chart-line section-icon"></i> R-squared by Number of Features</h3>
+            <span class="badge badge-green">Peak at k=20 (0.8449)</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="floodP2R2ProgressionChart"></canvas>
+          </div>
+          <p class="chart-annotation">
+            <strong>消長規律：</strong>R² 隨特徵數量呈現穩定階梯式陡升（k=1: 0.0368 → k=5: 0.1892 → k=10: 0.3774 → k=15: 0.5961 → k=20: 0.8449），顯示每一特徵皆具備不可替代之獨立資訊。
+          </p>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3 class="chart-title"><i class="fa-solid fa-chart-line section-icon"></i> RMSE by Number of Features</h3>
+            <span class="badge badge-blue">Minimum at k=20 (0.0201)</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="floodP2RmseProgressionChart"></canvas>
+          </div>
+          <p class="chart-annotation">
+            <strong>誤差規律：</strong>RMSE 自 k=1 的 0.0500 直線下降至 k=20 的 0.0201，未出現類似 50 Startups 之「過擬合懸崖」，證明大樣本 (N=1,117,957) 具備充足自由度支持 20 特徵模型。
+          </p>
+        </div>
+      </div>
+
+      <!-- 5 種演算法比較總表 (參照截圖 4) -->
+      <div class="section-header">
+        <h2 class="section-title"><i class="fa-solid fa-table-list section-icon"></i> 5種特徵選取演算法之完整模型表現 · Algorithm Comparison</h2>
+        <span class="section-subtitle">評估不同機器學習迴歸方法表現</span>
+      </div>
+
+      <div class="card">
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>方法名稱</th>
+                <th>特徵數 (k)</th>
+                <th>特徵選取策略</th>
+                <th>Validation R²</th>
+                <th>Validation RMSE</th>
+                <th>Validation MAE</th>
+                <th>綜合推薦評定</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Baseline (單純線性回歸)</strong></td>
+                <td>1</td>
+                <td>僅取 MonsoonIntensity 單變數</td>
+                <td>0.0368</td>
+                <td>0.0500</td>
+                <td>0.0402</td>
+                <td><span class="badge badge-coral">嚴重欠擬合</span></td>
+              </tr>
+              <tr>
+                <td><strong>SelectKBest (F-Regression)</strong></td>
+                <td>10</td>
+                <td>依據相關係數選取前 10 顯著因子</td>
+                <td>0.3774</td>
+                <td>0.0401</td>
+                <td>0.0321</td>
+                <td><span class="badge badge-amber">中度預測力</span></td>
+              </tr>
+              <tr>
+                <td><strong>RFE (遞歸特徵消除)</strong></td>
+                <td>15</td>
+                <td>以 OLS 權重逐輪剔除弱特徵</td>
+                <td>0.5961</td>
+                <td>0.0323</td>
+                <td>0.0257</td>
+                <td><span class="badge badge-blue">高度精簡</span></td>
+              </tr>
+              <tr style="background: rgba(16, 185, 129, 0.08); font-weight: 700;">
+                <td><strong><i class="fa-solid fa-trophy" style="color: #f59e0b;"></i> OLS 多元線性回歸</strong></td>
+                <td>20</td>
+                <td>保留全數 20 項評分特徵</td>
+                <td style="color: #10b981;">0.8449</td>
+                <td style="color: #10b981;">0.0201</td>
+                <td style="color: #10b981;">0.0158</td>
+                <td><span class="badge badge-green">★ 最優推薦首選</span></td>
+              </tr>
+              <tr style="background: rgba(16, 185, 129, 0.04);">
+                <td><strong>RidgeCV (L2 正則化)</strong></td>
+                <td>20</td>
+                <td>全特徵 + 權重衰減懲罰項</td>
+                <td>0.8449</td>
+                <td>0.0201</td>
+                <td>0.0158</td>
+                <td><span class="badge badge-green">高度穩定等價</span></td>
+              </tr>
+              <tr style="background: rgba(16, 185, 129, 0.04);">
+                <td><strong>LassoCV (L1 正則化)</strong></td>
+                <td>20</td>
+                <td>全特徵 + 稀疏化懲罰項</td>
+                <td>0.8449</td>
+                <td>0.0201</td>
+                <td>0.0158</td>
+                <td><span class="badge badge-green">係數無零化收縮</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 3: CUSTOM DATASET 自訂 CSV 資料集多元迴歸 (加總分 2 分功能) -->
+    <!-- ========================================================================= -->
+    <section id="customDatasetView" class="problem-view" style="display: none;">
+      <!-- 頂部橫幅卡片 -->
+      <div class="hero-banner">
+        <div class="badge-tag-wrap">
+          <span class="badge badge-green"><i class="fa-solid fa-star"></i> 加總分 2 分功能</span>
+          <span class="badge badge-blue"><i class="fa-solid fa-bolt"></i> 純前端 OLS 矩陣引擎</span>
+          <span class="badge badge-purple" id="customDatasetBadge">50_Startups.csv (預載展示)</span>
+        </div>
+        <h1 class="hero-title">Custom Dataset: 自訂 CSV 資料集多元線性迴歸分析</h1>
+        <p class="hero-desc">
+          支援輸入任意公開 CSV 檔案連結（如 Avik-Jain 50_Startups.csv 或其他 GitHub Raw 網址）或上傳本機 CSV 檔案。全自動解析欄位型態、彈性選取目標變數 (y) 與特徵 (X)，以純前端高斯消去矩陣求解 OLS 迴歸模型，即時產出統計檢定、殘差診斷與互動敏感度滑桿！
+        </p>
+      </div>
+
+      <!-- CSV 輸入與配置區塊 (參照截圖 2) -->
+      <div class="custom-dataset-box">
+        <label for="customCsvUrlInput" style="font-size: 0.9rem; font-weight: 700; color: var(--text-heading);">
+          <i class="fa-solid fa-link section-icon"></i> 請輸入公開 CSV 檔案連結 (URL):
+        </label>
+        <div class="url-input-group">
+          <input type="text" id="customCsvUrlInput" class="url-input"
+            value="https://raw.githubusercontent.com/Avik-Jain/100-Days-Of-ML-Code/master/datasets/50_Startups.csv"
+            placeholder="請輸入以 .csv 結尾的公開網址...">
+          <button id="loadCustomUrlBtn" class="btn btn-primary">
+            <i class="fa-solid fa-cloud-arrow-down"></i> 載入並分析
+          </button>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <div class="file-upload-wrap">
+            <label for="customCsvFileInput" class="file-upload-label">
+              <i class="fa-solid fa-file-arrow-up" style="color: var(--primary-accent);"></i> 或上傳本機 CSV 檔案
+            </label>
+            <input type="file" id="customCsvFileInput" accept=".csv" style="display: none;">
+            <button id="resetCustomDefaultBtn" class="btn btn-secondary" style="font-size: 0.82rem; padding: 6px 12px;">
+              <i class="fa-solid fa-rotate-left"></i> 重設為 50_Startups 預設資料
+            </button>
+          </div>
+          <div id="customLoadStatus" style="font-size: 0.82rem; font-weight: 600;"></div>
+        </div>
+
+        <!-- 欄位配置區 (目標 y 與特徵 X 選取) -->
+        <div class="column-selection-grid">
+          <div class="col-select-block">
+            <label for="customTargetSelect" class="col-select-label">
+              <i class="fa-solid fa-bullseye section-icon"></i> 1. 選取目標變數 (y):
+            </label>
+            <select id="customTargetSelect" class="target-select"></select>
+            <p style="font-size: 0.74rem; color: var(--text-muted); margin-top: 4px;">
+              預測目標需為數值連續型欄位 (如 Profit, FloodProbability, Price)
+            </p>
+          </div>
+
+          <div class="col-select-block">
+            <div class="col-select-label">
+              <i class="fa-solid fa-sliders section-icon"></i> 2. 選取特徵變數 (X 矩陣):
+            </div>
+            <div id="customFeaturesList" class="features-checklist">
+              <!-- JS 動態生成 -->
+            </div>
+            <p style="font-size: 0.74rem; color: var(--text-muted); margin-top: 4px;">
+              類別型特徵（如 State）自動進行 One-Hot 虛擬變數編碼並去除基準項。
+            </p>
+          </div>
+        </div>
+
+        <div style="margin-top: 16px; text-align: right;">
+          <button id="runCustomTrainBtn" class="btn btn-primary" style="padding: 11px 26px; font-size: 0.95rem;">
+            <i class="fa-solid fa-play"></i> 開始多元線性迴歸訓練 (Train Model)
+          </button>
+        </div>
+      </div>
+
+      <!-- 自訂模型訓練結果呈現 (參照截圖 2) -->
+      <div id="customResultsContainer">
+        <!-- 核心評估指標 -->
+        <div class="section-header">
+          <h2 class="section-title"><i class="fa-solid fa-chart-simple section-icon"></i> 自訂資料集迴歸效能指標 · Model Performance Metrics</h2>
+          <span class="section-subtitle">80% 訓練集 / 20% 測試集切分</span>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-title">訓練集 R²</span>
+              <span class="metric-badge badge-blue">Train Set</span>
+            </div>
+            <div id="customMetricTrainR2" class="metric-value">0.8987</div>
+            <div class="metric-desc">樣本內變異解釋比例</div>
+          </div>
+
+          <div class="metric-card" style="border-color: #10b981;">
+            <div class="metric-header">
+              <span class="metric-title">測試集 R²</span>
+              <span class="metric-badge badge-green">Test Set ★</span>
+            </div>
+            <div id="customMetricTestR2" class="metric-value" style="color: #10b981;">0.9537</div>
+            <div class="metric-desc">樣本外泛化能力表現</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-title">均方根誤差 RMSE</span>
+              <span class="metric-badge badge-coral">Test RMSE</span>
+            </div>
+            <div id="customMetricRmse" class="metric-value">9,055.9573</div>
+            <div class="metric-desc">預測誤差標準差</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-title">平均絕對誤差 MAE</span>
+              <span class="metric-badge badge-coral">Test MAE</span>
+            </div>
+            <div id="customMetricMae" class="metric-value">6,961.4778</div>
+            <div class="metric-desc">平均預測誤差絕對值</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-title">調整後 R²</span>
+              <span class="metric-badge badge-purple">Adj R²</span>
+            </div>
+            <div id="customMetricAdjR2" class="metric-value">0.7721</div>
+            <div class="metric-desc">懲罰多餘特徵後的指標</div>
+          </div>
+        </div>
+
+        <!-- 統計診斷圖表 (實際 vs 預測 / 殘差圖) -->
+        <div class="charts-grid-2">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">實際值 vs 預測值 (Actual vs Predicted)</h3>
+              <span class="badge badge-green">45度理想線</span>
+            </div>
+            <div class="chart-wrapper">
+              <canvas id="customActualVsPredChart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">殘差分佈圖 (Residual Plot)</h3>
+              <span class="badge badge-blue">Zero Line</span>
+            </div>
+            <div class="chart-wrapper">
+              <canvas id="customResidualsChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- 特徵係數圖表 -->
+        <div class="card">
+          <div class="chart-header">
+            <h3 class="chart-title"><i class="fa-solid fa-chart-column section-icon"></i> 特徵係數分析 (Feature Coefficients)</h3>
+            <span class="badge badge-purple">Beta Weights</span>
+          </div>
+          <div class="chart-wrapper" style="height: 240px;">
+            <canvas id="customCoefficientsChart"></canvas>
+          </div>
+        </div>
+
+        <!-- 迴歸方程式與係數表 -->
+        <div class="section-header">
+          <h2 class="section-title"><i class="fa-solid fa-square-root-variable section-icon"></i> 迴歸方程式與係數表 · Model Equation & Coefficients</h2>
+          <span class="section-subtitle">參數估計、標準誤與顯著性</span>
+        </div>
+
+        <div class="equation-card">
+          <div class="equation-label">Fitted OLS Equation</div>
+          <div id="customEquationDisplay" class="equation-content"></div>
+        </div>
+
+        <div class="card">
+          <div class="data-table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>特徵名稱 (Predictor)</th>
+                  <th>估計係數 (β)</th>
+                  <th>標準誤 (Std Error)</th>
+                  <th>t-統計量</th>
+                  <th>p-值 (兩尾檢定)</th>
+                </tr>
+              </thead>
+              <tbody id="customCoefficientsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 測試集樣本預測表 + 即時敏感度實驗室 雙欄排列 (參照截圖 2) -->
+        <div class="grid-2-split" style="margin-top: 24px;">
+          <!-- 左欄：測試集樣本預測表 -->
+          <div class="card" style="margin-bottom: 0;">
+            <h3 class="card-title"><i class="fa-solid fa-list-check section-icon"></i> 測試集樣本預測表 (Out of Sample)</h3>
+            <div class="data-table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>編號</th>
+                    <th>實際值 (Actual)</th>
+                    <th>預測值 (Predicted)</th>
+                    <th>殘差 (Residual)</th>
+                    <th>誤差百分比</th>
+                    <th>狀態</th>
+                  </tr>
+                </thead>
+                <tbody id="customPredictionsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 右欄：即時預測與敏感度實驗室 -->
+          <div class="predictor-card">
+            <div class="predictor-header">
+              <h3 class="predictor-title"><i class="fa-solid fa-flask-vial section-icon"></i> 即時預測與敏感度實驗室</h3>
+              <span class="badge badge-green">Live Sensitivity Lab</span>
+            </div>
+
+            <div id="customPredictorControls" style="overflow-y: auto; max-height: 280px; padding-right: 4px;">
+              <!-- JS 動態生成滑桿與下拉選單 -->
+            </div>
+
+            <div class="prediction-result-box" style="margin-top: 16px;">
+              <div id="customPredictorTargetLabel" class="pred-result-label">PREDICTED TARGET</div>
+              <div id="customPredictorResult" class="pred-result-val">114,682.9937</div>
+              <div class="pred-result-sub">依據當前自訂特徵即時推論</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 頁尾 Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div>
+        <strong>AIoT 作業二：Kaggle 洪水機率預測多元線性迴歸分析平台</strong> ‧ 學號: 7115064011
+      </div>
+      <div class="footer-links">
+        <a href="https://www.kaggle.com/competitions/playground-series-s4e5" target="_blank" rel="noopener">
+          <i class="fa-brands fa-kaggle"></i> Kaggle S4E5
+        </a>
+        <a href="https://raw.githubusercontent.com/Avik-Jain/100-Days-Of-ML-Code/master/datasets/50_Startups.csv" target="_blank" rel="noopener">
+          <i class="fa-solid fa-link"></i> 50_Startups.csv
+        </a>
+        <a href="README.md" target="_blank">
+          <i class="fa-solid fa-book"></i> 專案報告 README
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 應用程式邏輯主腳本 -->
+  <script src="app.js"></script>
+</body>
+</html>
