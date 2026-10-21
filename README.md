@@ -97,8 +97,37 @@ jupyter lab                        # 開啟 notebooks/7115064011_hw2.ipynb 並 R
 
 ---
 
-## AI 協助
+## 📦 繳交成果檔案清單 (Deliverables)
 
-- **開發工具**：Antigravity（Gemini）輔助撰寫 notebook
-- **ChatGPT**：分析策略與統計概念討論（對話紀錄見報告附錄）
-- **NotebookLM**：彙整網路上同主題解法並撰寫摘要（見報告）
+| 繳交項目 | 檔案路徑 | 說明 |
+| :--- | :--- | :--- |
+| **主要繳交** | [GitHub Repo](https://github.com/g115064011-arch/AIoT-HW2-regression) | 完整開源專案與純前端 OLS 分析平台 |
+| **主要繳交** | [`index.html`](index.html) | 純前端互動式分析平台（整合 Problem 1, 2 與自訂資料集） |
+| **主程式** | [`notebooks/7115064011_hw2.ipynb`](notebooks/7115064011_hw2.ipynb) | CRISP-DM 六大階段完整程式碼與統計推論 |
+| **Optional 1** | [`notebooks/7115064011_hw2_report.pdf`](notebooks/7115064011_hw2_report.pdf) | 13 頁完整作業書面報告書 |
+| **Optional 2** | [`notebooks/7115064011_GPT對話.pdf`](notebooks/7115064011_GPT對話.pdf) | 10 頁 ChatGPT 深度對話紀錄 PDF（pdfCrowd 匯出） |
+| **Optional 3** | [`assets/7115064011_infographic.png`](assets/7115064011_infographic.png) | CRISP-DM 洪水預測全景視覺化資訊圖表（200 DPI 海報） |
+| **完整封裝** | [`notebooks/7115064011_hw2.zip`](notebooks/7115064011_hw2.zip) | 整合 ipynb、報告書、對話紀錄與資訊圖表之完整壓縮檔 |
+
+---
+
+## 📊 CRISP-DM 專案全景資訊圖表 (Infographic)
+
+![AIoT HW2 CRISP-DM 洪水機率預測資訊圖表](assets/7115064011_infographic.png)
+
+---
+
+## 🤖 AI 協助與同主題網路解法深度研究
+
+### 1. 【NotebookLM 摘要】（同主題網路解法研究，250+ 字）
+- **文獻來源**：使用 Google NotebookLM 深度研讀 Kaggle Playground Series S4E5 官方頂尖方案（*1st Place Solution*, *LightGBM Baseline*, *PSS4E5 EDA*, *Regression Flood Analysis*）。
+- **摘要內容**：
+  本資料集為 Kaggle 合成資料，20 個環境與治理特徵的分佈形態、與目標變數 `FloodProbability` 的相關性高度一致（$r \approx 0.178 \sim 0.190$）且彼此正交獨立（$|r| < 0.02$）。因此，決定洪水機率的關鍵不是「單項指標過高」，而是 20 個特徵在整體系統中的**「總體累積風險」**。社群分析指出，若將 20 個特徵直接加總乘上約 0.0056 再減去 0.05，即可獲得高達 $R^2 \approx 0.845$ 的預測準確率，與本專案多元線性迴歸 (OLS) 的實證結果完全一致（各特徵標準化係數落在 0.0115 ~ 0.0118，單項每增加 1 分約提升 0.56 個百分點機率，Kaggle Private $R^2 = 0.8443$）。
+  
+  高分解法進一步加入「列統計特徵」（總和、標準差、最大值、分位數）與特徵排序，改採 LightGBM / CatBoost 梯度提升決策樹，單模 $R^2$ 可提升至約 0.869；冠軍解法則融和 30 個以上模型進行 Ridge 堆疊，達到 $R^2 \approx 0.8694$。此外，分析發現當特徵總和落在 72~75 時，洪水機率有非線性躍升階梯，這完美解釋了本專案殘差診斷中觀察到的「非常態厚尾與斜條紋非線性結構」。
+
+### 2. 【GPT 輔助內容】
+- **ChatGPT (GPT-4o)**：討論特徵選擇方法、嚴謹推導信賴區間（CI）與預測區間（PI）之數學公式與常態假設檢定。（完整對話已匯出為 [`notebooks/7115064011_GPT對話.pdf`](notebooks/7115064011_GPT對話.pdf)）。
+- **Antigravity (Gemini)**：協助撰寫 CRISP-DM 六大階段 Jupyter Notebook 與純前端互動式 OLS 分析平台。
+- **Claude**：協助規劃 CRISP-DM 流程大綱與撰寫 13 頁完整書面報告書。
+- **嚴謹數據校正紀錄**：所有數據均經本地 Python 實測驗證，AI 曾產出之不符數據已全數校正（資料筆數修正為 1,117,957；VIF 修正為 1.0017 ~ 1.0037；95% 預測區間覆蓋率修正為實測 94.61%；殘差診斷修正為實測之右偏厚尾結構）。

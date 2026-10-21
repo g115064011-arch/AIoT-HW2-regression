@@ -6,3 +6,4 @@ kaggle.json
 access_token
 .env
 submissions/
+powershell.cmd

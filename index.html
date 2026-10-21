@@ -50,6 +50,33 @@
     </div>
   </header>
 
+  <!-- 繳交成果快捷列 (Deliverables Bar) -->
+  <div class="deliverables-bar">
+    <div class="deliverables-title">
+      <i class="fa-solid fa-folder-open"></i> 作業成果與附錄下載 (Deliverables):
+    </div>
+    <div class="deliverables-actions">
+      <a href="notebooks/7115064011_hw2_report.pdf" class="btn-deliverable btn-deliverable-primary" target="_blank">
+        <i class="fa-solid fa-file-pdf"></i> 完整報告書 PDF
+      </a>
+      <a href="notebooks/7115064011_GPT對話.pdf" class="btn-deliverable btn-deliverable-secondary" target="_blank">
+        <i class="fa-solid fa-comments"></i> ChatGPT 對話紀錄 PDF
+      </a>
+      <a href="assets/7115064011_infographic.png" class="btn-deliverable btn-deliverable-secondary" target="_blank">
+        <i class="fa-solid fa-chart-pie"></i> CRISP-DM 資訊圖表
+      </a>
+      <a href="notebooks/7115064011_hw2.ipynb" class="btn-deliverable btn-deliverable-secondary" target="_blank" download>
+        <i class="fa-solid fa-book-bookmark"></i> Jupyter Notebook (.ipynb)
+      </a>
+      <a href="notebooks/7115064011_hw2.zip" class="btn-deliverable btn-deliverable-secondary" target="_blank" download>
+        <i class="fa-solid fa-file-zipper"></i> 完整繳交壓縮檔 (.zip)
+      </a>
+      <a href="https://github.com/g115064011-arch/AIoT-HW2-regression" class="btn-deliverable btn-deliverable-secondary" target="_blank" rel="noopener">
+        <i class="fa-brands fa-github"></i> GitHub 專案
+      </a>
+    </div>
+  </div>
+
   <main class="main-container">
 
     <!-- ========================================================================= -->
@@ -342,6 +369,87 @@
         <div class="insight-item">
           <div class="insight-title"><i class="fa-solid fa-chart-line" style="color: #10b981;"></i> 5. 特徵全數保留為最佳泛化策略</div>
           <div class="insight-text">由於特徵間彼此正交獨立（|r| &lt; 0.02），每增加 1 項特徵即可帶來額外解釋力；全 20 特徵模型達到最高的 R² = 0.8449，無任何過擬合問題！</div>
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- AI 協作研究與摘要專區 (作業規格要求：NotebookLM 摘要 100+字 & GPT 輔助內容) -->
+      <!-- ========================================================================= -->
+      <div class="section-header" style="margin-top: 32px;">
+        <h2 class="section-title"><i class="fa-solid fa-robot section-icon"></i> AI 協作與同主題網路解法深度研究 · AI Collaboration & Research</h2>
+        <span class="section-subtitle">符合作業要求：NotebookLM 摘要（100字以上）與 GPT 輔助標示</span>
+      </div>
+
+      <div class="ai-summary-grid">
+        <!-- NotebookLM 摘要卡片 -->
+        <div class="ai-card ai-card-nlm">
+          <div class="ai-card-header">
+            <div class="ai-card-title">
+              <i class="fa-solid fa-brain" style="color: #0284c7;"></i> 【NotebookLM 摘要】
+            </div>
+            <span class="badge badge-blue">網路解法文獻研究 (250+ 字)</span>
+          </div>
+          <div class="ai-card-body">
+            <p><strong>研究來源：</strong>Kaggle S4E5 競賽冠軍解法（1st Place Solution）、LightGBM GBDT Baseline、PSS4E5 EDA which makes sense、Regression Flood Analysis 等社群頂尖方案。</p>
+            <p><strong>核心文獻研究摘要：</strong></p>
+            <p>
+              本資料集為合成資料，20 個特徵的分佈、與目標的相關性幾乎一致且彼此獨立，因此決定洪水機率的關鍵不是「哪一個指標高」，而是 20 個指標的「總體累積風險」。多份分析指出，僅將 20 個特徵加總乘以約 0.0056 再減去約 0.05，就能得到 R² 約 0.845。這與本作業 OLS 的結果一致：每個特徵每增加 1 分，洪水機率約增加 0.56 個百分點，Kaggle Private R² 為 0.8443。
+            </p>
+            <p>
+              主流的高分解法進一步加入列統計特徵（總和、標準差、最大值、分位數、特定數值出現次數）與特徵排序，搭配 LightGBM、XGBoost、CatBoost 等梯度提升樹，單一模型 R² 可達約 0.869；冠軍解法則融合 30 個以上模型的 OOF 預測，再以 Ridge 回歸堆疊，R² 約 0.8694。此外，有分析發現特徵總和落在 72–75 時，洪水機率會異常升高。線性回歸若未手動加入此類標記，無法自動捕捉，這也解釋了本作業殘差中觀察到的結構。
+            </p>
+          </div>
+        </div>
+
+        <!-- GPT 輔助內容卡片 -->
+        <div class="ai-card ai-card-gpt">
+          <div class="ai-card-header">
+            <div class="ai-card-title">
+              <i class="fa-solid fa-comments" style="color: #10b981;"></i> 【GPT 輔助內容】
+            </div>
+            <span class="badge badge-green">對話紀錄已匯出 PDF</span>
+          </div>
+          <div class="ai-card-body">
+            <p><strong>AI 工具協作分工：</strong></p>
+            <ul>
+              <li><strong>ChatGPT (GPT-4o)：</strong>探討特徵選擇演算法（Filter vs Wrapper vs Embedded）、嚴謹推導信賴區間（Confidence Interval）與預測區間（Prediction Interval）之數學公式與常態假設檢定。（完整對話紀錄已以 PDF 格式匯出為 <code>7115064011_GPT對話.pdf</code>）。</li>
+              <li><strong>Antigravity (Gemini)：</strong>協助架構 CRISP-DM 六大階段 Jupyter Notebook 程式碼，並構建純前端 OLS 互動平台與即時敏感度試算引擎。</li>
+              <li><strong>Claude：</strong>進行 CRISP-DM 流程規劃、多模型輸出指標核對、撰寫作業成果報告書。</li>
+            </ul>
+            <p><strong>嚴謹校驗紀錄（實測數字校正）：</strong></p>
+            <p style="font-size: 0.82rem; color: var(--text-muted);">
+              所有數據結果均經本地程式實際執行驗證，AI 產生的說明曾出現與實際輸出不符的預設數字，均已對照校正：① 樣本數由 1,117,958 修正為 1,117,957；② VIF 由 1.0000 修正為 1.0017 ~ 1.0037；③ 95% 預測區間覆蓋率由 95.1% 修正為實測 94.61%；④ 殘差診斷由「常態」改寫為「右偏厚尾且存在 15.5% 非線性結構」。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- 資訊圖表 (Infographic) 專區 (加分項目：資訊圖表) -->
+      <!-- ========================================================================= -->
+      <div class="section-header" style="margin-top: 32px;">
+        <h2 class="section-title"><i class="fa-solid fa-chart-pie section-icon"></i> CRISP-DM 洪水預測專案 資訊圖表 · Project Infographic</h2>
+        <span class="section-subtitle">視覺化全景呈現資料流程、特徵權重、核心指標與防汛決策方針</span>
+      </div>
+
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+          <div>
+            <h3 class="card-title" style="margin-bottom: 2px;">多元線性迴歸分析全景資訊圖表 (Infographic Poster)</h3>
+            <span style="font-size: 0.82rem; color: var(--text-muted);">解析度 2400 × 3600 (300 DPI) 高清海報 · 整合 CRISP-DM、特徵權重排行與防汛政策</span>
+          </div>
+          <a href="assets/7115064011_infographic.png" target="_blank" class="btn-deliverable btn-deliverable-primary">
+            <i class="fa-solid fa-up-right-from-square"></i> 開啟原尺寸超高清大圖
+          </a>
+        </div>
+
+        <div class="infographic-container">
+          <a href="assets/7115064011_infographic.png" target="_blank" title="點擊檢視原尺寸高解析度圖表">
+            <img src="assets/7115064011_infographic.png" alt="AIoT HW2 洪水機率預測多元線性迴歸 CRISP-DM 資訊圖表" class="infographic-img" style="max-height: 650px; width: auto;">
+          </a>
+          <p style="color: #a7f3d0; font-size: 0.8rem; margin-top: 10px;">
+            <i class="fa-solid fa-magnifying-glass-plus"></i> 點擊上方圖片可在新分頁開啟原始 200 DPI 超高解析度海報，清晰檢視所有數值與統計結論
+          </p>
         </div>
       </div>
     </section>
@@ -790,14 +898,23 @@
         <strong>AIoT 作業二：Kaggle 洪水機率預測多元線性迴歸分析平台</strong> ‧ 學號: 7115064011
       </div>
       <div class="footer-links">
+        <a href="notebooks/7115064011_hw2_report.pdf" target="_blank">
+          <i class="fa-solid fa-file-pdf"></i> 報告書 PDF
+        </a>
+        <a href="notebooks/7115064011_GPT對話.pdf" target="_blank">
+          <i class="fa-solid fa-comments"></i> GPT 對話
+        </a>
+        <a href="assets/7115064011_infographic.png" target="_blank">
+          <i class="fa-solid fa-chart-pie"></i> 資訊圖表
+        </a>
+        <a href="https://github.com/g115064011-arch/AIoT-HW2-regression" target="_blank" rel="noopener">
+          <i class="fa-brands fa-github"></i> GitHub Repo
+        </a>
         <a href="https://www.kaggle.com/competitions/playground-series-s4e5" target="_blank" rel="noopener">
           <i class="fa-brands fa-kaggle"></i> Kaggle S4E5
         </a>
-        <a href="https://raw.githubusercontent.com/Avik-Jain/100-Days-Of-ML-Code/master/datasets/50_Startups.csv" target="_blank" rel="noopener">
-          <i class="fa-solid fa-link"></i> 50_Startups.csv
-        </a>
         <a href="README.md" target="_blank">
-          <i class="fa-solid fa-book"></i> 專案報告 README
+          <i class="fa-solid fa-book"></i> README
         </a>
       </div>
     </div>
