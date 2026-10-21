@@ -52,9 +52,13 @@
 
 ```
 ├── index.html                       # 網頁平台主頁（整合 Problem 1, Problem 2, 自訂資料集）
-├── style.css                        # 視覺主題樣式表（支援綠金雅致風與科技藍風格）
-├── app.js                           # 核心統計運算、動態圖表與 OLS 引擎
-├── notebooks/7115064011_hw2.ipynb   # 主程式（CRISP-DM 六階段）
+├── style.css                        # 視覺主題樣式表（深翡翠綠與暖白雅致風格）
+├── app.js                           # 核心統計運算、動態圖表與純前端 OLS 求解引擎
+├── notebooks/7115064011_hw2.ipynb   # 主程式（CRISP-DM 六階段完整分析）
+├── notebooks/7115064011_hw2_report.pdf # 13 頁完整作業成果報告書
+├── notebooks/7115064011_GPT對話.pdf # ChatGPT 完整對話紀錄 PDF
+├── notebooks/7115064011_hw2.zip     # 完整作業繳交打包壓縮檔
+├── assets/                          # 網頁展示截圖與 CRISP-DM 資訊圖表
 ├── model/model_params.json          # 部署用模型參數（執行後產生）
 ├── data/                            # 資料集（含 50_Startups.csv 與 Kaggle 資料）
 └── submissions/                     # Kaggle 提交檔（未上傳）
@@ -64,20 +68,36 @@
 
 ## 🌐 互動式網頁平台功能說明 (Web Platform)
 
-本專題提供完整的純前端互動式多元線性迴歸分析平台（免安裝複雜後端環境，點擊 [`index.html`](index.html) 或以任何靜態伺服器開啟即可直接使用）：
+本專題提供完整的純前端互動式多元線性迴歸分析平台（免安裝複雜後端環境，點擊 [`index.html`](index.html) 或以任何靜態伺服器開啟即可直接使用，並完整支援 Vercel 雲端直接部署）：
 
-### 🎯 加分項目落實：
-1. **加總分 1分：下拉視窗呈現兩種 Problem**
-   - **Problem 1: 基礎多元線性迴歸分析 (Basic Multiple Linear Regression)**：呈現 50 Startups 全特徵基準模型，包含 $R^2$、RMSE、MAE、調整後 $R^2$、統計診斷圖表 (實際值 vs 預測值、殘差分佈圖)、特徵係數圖、迴歸方程式與係數顯著性統計表、測試集樣本預測表、即時獲利試算器、CRISP-DM 六大流程卡片與商業洞察。
-   - **Problem 2: 特徵選擇與模型精簡 (Feature Selection & Model Comparison)**：比較 5 種機器學習特徵篩選方法（Lasso、Forward SFS、Backward SFS、RFE、ElasticNet、Exhaustive Search），提供 $k=1 \sim 5$ 動態切換、RMSE 與 $R^2$ 消長折線圖、鎖定 $k=2$ 最佳黃金平衡點（Optimal Sweet Spot，RMSE 降至全場最低 $8,198.80）以及 6 種特徵配置卡片。
-2. **加總分 2分：可任意輸入 Dataset**
-   - **支援任意公開 CSV URL 輸入**：預設帶入 `https://raw.githubusercontent.com/Avik-Jain/100-Days-Of-ML-Code/master/datasets/50_Startups.csv`，亦可載入任何外部 CSV 或本機檔案。
-   - **自動型態辨識與動態欄位選擇**：自動區分數值與類別特徵，自由挑選預測目標 $y$ 與特徵矩陣 $X$。
-   - **純前端 OLS 矩陣迴歸計算引擎**：即時求解 $\beta = (X^T X)^{-1} X^T y$，動態產生模型指標、殘差診斷圖、迴歸方程式與係數表。
-   - **動態即時敏感度實驗室 (Live Sensitivity Lab)**：依據使用者選取之特徵自動生成互動滑桿與選單，滑動時即時推估預測值！
-3. **加碼整合原 Kaggle 洪水機率預測專案**：在下拉選單中可切換至洪水機率預測專案，整合 20 項特徵與即時風險模擬器。
-4. **雙風格外觀主題切換**：點擊右上角按鈕即可在「綠金雅致風格」與「科技藍風格」之間一鍵無縫切換。
+### 🎯 下拉選單三大分析模式：
+1. **Problem 1: 基礎多元線性迴歸分析 (全 20 特徵模型)**
+   - **Kaggle 洪水全特徵基準模型**：納入季風強度、地形排水、河川管理、都市化等全 20 項評分特徵，呈現 Validation $R^2 = 0.8449$、RMSE = 0.0201、MAE = 0.0158、95% 預測區間覆蓋率 94.61%、VIF < 1.004。
+   - **統計診斷與係數解析**：實際值 vs 預測值 45 度理想線、殘差分佈圖 (Durbin-Watson = 1.999)、20 項特徵標準化係數橫條圖、迴歸方程式與係數檢定表。
+   - **實測預測與策略洞察**：驗證集隨機抽樣 10 筆樣本預測與 95% 預測區間檢視、即時洪水風險敏感度實驗室（20 項滑桿即時試算）、CRISP-DM 六大流程實踐卡片與防汛治理 5 大決策方針。
 
+2. **Problem 2: 特徵選擇與模型比較 (5 種演算法評估)**
+   - **演算法橫向評估比較**：評估比較 Baseline (單純迴歸)、SelectKBest (F-Regression)、RFE (遞歸特徵消除)、RidgeCV (L2 正則化)、LassoCV (L1 正則化) 與 OLS 全特徵迴歸等 5 種演算法。
+   - **特徵數量消長趨勢**：提供 $k = 1, 5, 10, 15, 20$ 動態切換、R² 與 RMSE 消長雙折線圖，實證論證為何保留全部 20 個特徵為本資料集最佳泛化規格（Optimal Full Model ★）。
+
+3. **⭐ 加分功能: 自訂 CSV 資料集多元迴歸 (任意輸入 Dataset，加總分 2 分)**
+   - **支援任意公開 CSV URL 輸入**：預設帶入 `50_Startups.csv`，亦可一鍵載入外部 CSV 或點擊上傳本機 CSV 檔案。
+   - **自動型態辨識與動態欄位選擇**：自動區分數值與類別特徵（自動進行 One-Hot 編碼），彈性自由挑選預測目標 $y$ 與特徵矩陣 $X$。
+   - **純前端 OLS 矩陣迴歸計算引擎**：即時求解 $\beta = (X^T X)^{-1} X^T y$，動態計算訓練集/測試集 $R^2$、RMSE、MAE、調整後 $R^2$。
+   - **動態診斷圖表與敏感度實驗室**：動態繪製 Actual vs Predicted、殘差圖、特徵係數圖、迴歸方程式、係數統計表、測試集樣本預測表，並依據使用者挑選的特徵自動生成互動滑桿與選單，即時推估預測值！
+
+---
+
+## 📸 網頁平台執行畫面截圖 (Web Platform Screenshots)
+
+### 1. Problem 1：基礎多元線性迴歸分析（Kaggle 洪水全特徵基準模型）
+![Problem 1 基礎多元線性迴歸分析](assets/web_problem1.png)
+
+### 2. Problem 2：特徵選擇與模型比較（5 種演算法評估與 k=1~20 消長）
+![Problem 2 特徵選擇與模型比較](assets/web_problem2.png)
+
+### 3. ⭐ 加分功能：自訂 CSV 資料集多元迴歸分析（任意輸入 Dataset）
+![Custom Dataset 自訂 CSV 資料集多元線性迴歸分析](assets/web_custom_dataset.png)
 
 ---
 
@@ -109,11 +129,6 @@ jupyter lab                        # 開啟 notebooks/7115064011_hw2.ipynb 並 R
 | **Optional 3** | [`assets/7115064011_infographic.png`](assets/7115064011_infographic.png) | CRISP-DM 洪水預測全景視覺化資訊圖表（200 DPI 海報） |
 | **完整封裝** | [`notebooks/7115064011_hw2.zip`](notebooks/7115064011_hw2.zip) | 整合 ipynb、報告書、對話紀錄與資訊圖表之完整壓縮檔 |
 
----
-
-## 📊 CRISP-DM 專案全景資訊圖表 (Infographic)
-
-![AIoT HW2 CRISP-DM 洪水機率預測資訊圖表](assets/7115064011_infographic.png)
 
 ---
 
